@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.5.13"
 	id("io.spring.dependency-management") version "1.1.7"
 	jacoco
+	id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "com.example"
@@ -48,4 +49,12 @@ tasks.jacocoTestReport {
 		xml.required = true
 		html.required = true
 	}
+}
+
+pitest {
+	junit5PluginVersion = "1.2.1"
+	targetClasses = setOf("com.example.TpGestionLivre.domain.*")
+	targetTests = setOf("com.example.TpGestionLivre.domain.*")
+	outputFormats = setOf("XML", "HTML")
+	mutationThreshold = 0
 }

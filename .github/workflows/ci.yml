@@ -59,3 +59,13 @@ jobs:
         with:
           name: coverage-report
           path: build/reports/jacoco/test/html/
+
+      - name: Run mutation tests
+        run: ./gradlew pitest
+
+      - name: Upload mutation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-report
+          path: build/reports/pitest/
