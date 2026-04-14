@@ -12,6 +12,7 @@ jobs:
     permissions:
       checks: write
       contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -42,3 +43,19 @@ jobs:
         with:
           name: test-report
           path: build/reports/tests/test/
+
+      - name: Publish coverage report
+        uses: madrapps/jacoco-report@v1.7.1
+        if: always()
+        with:
+          paths: build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 0
+          title: Code Coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: build/reports/jacoco/test/html/
