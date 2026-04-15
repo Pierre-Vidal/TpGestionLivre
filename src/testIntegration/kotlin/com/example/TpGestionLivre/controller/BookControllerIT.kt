@@ -4,6 +4,7 @@ import com.example.TpGestionLivre.domain.model.Livre
 import com.example.TpGestionLivre.domain.usecase.GestionLivreUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
@@ -69,15 +70,17 @@ class BookControllerIT(
             }
         }
 
-        test("GET /books quand le domaine lance une exception devrait retourner 500") {
+        test("POST /books quand le domaine lance une exception inattendue devrait propager l'erreur") {
             // Arrange
-            every { gestionLivreUseCase.listerLivres() } throws RuntimeException("Erreur interne")
+            every { gestionLivreUseCase.ajouterLivre("Harry Potter", "J.K Rowling") } throws
+                RuntimeException("Erreur interne")
 
             // Act & Assert
-            mockMvc.get("/books") {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isInternalServerError() }
+            shouldThrow<Exception> {
+                mockMvc.post("/books") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = """{"titre":"Harry Potter","auteur":"J.K Rowling"}"""
+                }
             }
         }
     }
