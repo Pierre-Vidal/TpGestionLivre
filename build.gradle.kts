@@ -22,6 +22,7 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
+	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -30,6 +31,35 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.9.1")
     testImplementation("io.kotest:kotest-property:5.9.1")
     testImplementation("io.mockk:mockk:1.13.10")
+}
+
+testing {
+	suites {
+		val testIntegration by registering(JvmTestSuite::class) {
+			sources {
+				kotlin {
+					setSrcDirs(listOf("src/testIntegration/kotlin"))
+				}
+				compileClasspath += sourceSets.main.get().output
+				runtimeClasspath += sourceSets.main.get().output
+			}
+		}
+	}
+}
+
+val testIntegrationImplementation: Configuration by configurations.getting {
+	extendsFrom(configurations.implementation.get())
+}
+
+dependencies {
+	testIntegrationImplementation("io.mockk:mockk:1.13.8")
+	testIntegrationImplementation("io.kotest:kotest-assertions-core:5.9.1")
+	testIntegrationImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+	testIntegrationImplementation("com.ninja-squad:springmockk:4.0.2")
+	testIntegrationImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+	testIntegrationImplementation("org.springframework.boot:spring-boot-starter-test") {
+		exclude(module = "mockito-core")
+	}
 }
 
 kotlin {
@@ -44,7 +74,13 @@ tasks.withType<Test> {
 }
 
 tasks.jacocoTestReport {
-	dependsOn(tasks.test)
+	dependsOn(tasks.test, tasks.named("testIntegration"))
+	executionData.setFrom(
+		fileTree(layout.buildDirectory).include(
+			"jacoco/test.exec",
+			"jacoco/testIntegration.exec"
+		)
+	)
 	reports {
 		xml.required = true
 		html.required = true
