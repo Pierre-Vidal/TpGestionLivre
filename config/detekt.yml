@@ -12,6 +12,12 @@ style:
   ReturnCount:
     active: true
     max: 2
+  EmptyFunctionBlock:
+    active: false
+  SpreadOperator:
+    active: false
+  MaxLineLength:
+    active: false
 
 naming:
   active: true
@@ -24,6 +30,8 @@ naming:
   VariableNaming:
     active: true
     variablePattern: '[a-z][A-Za-z0-9]*'
+  PackageNaming:
+    active: false
 
 complexity:
   active: true
