@@ -5,7 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 	jacoco
 	id("info.solidsoft.pitest") version "1.15.0"
-	id("io.gitlab.arturbosch.detekt") version "1.23.4"
+	id("io.gitlab.arturbosch.detekt") version "1.23.7"
 }
 
 group = "com.example"
@@ -143,6 +143,14 @@ tasks.jacocoTestReport {
 detekt {
 	config.setFrom("config/detekt.yml")
 	buildUponDefaultConfig = true
+}
+
+configurations.matching { it.name.contains("detekt") }.all {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "org.jetbrains.kotlin") {
+			useVersion("1.9.25")
+		}
+	}
 }
 
 pitest {
