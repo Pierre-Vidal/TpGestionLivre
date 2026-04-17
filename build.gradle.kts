@@ -5,7 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 	jacoco
 	id("info.solidsoft.pitest") version "1.15.0"
-	id("io.gitlab.arturbosch.detekt") version "1.23.8"
+	id("io.gitlab.arturbosch.detekt") version "1.23.4"
 }
 
 group = "com.example"
