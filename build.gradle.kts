@@ -47,10 +47,41 @@ testing {
 				runtimeClasspath += sourceSets.main.get().output
 			}
 		}
+
+		val testArchitecture by registering(JvmTestSuite::class) {
+			sources {
+				kotlin {
+					setSrcDirs(listOf("src/testArchitecture/kotlin"))
+				}
+				compileClasspath += sourceSets.main.get().output
+				runtimeClasspath += sourceSets.main.get().output
+			}
+		}
+
+		val testComponent by registering(JvmTestSuite::class) {
+			sources {
+				kotlin {
+					setSrcDirs(listOf("src/testComponent/kotlin"))
+				}
+				resources {
+					setSrcDirs(listOf("src/testComponent/resources"))
+				}
+				compileClasspath += sourceSets.main.get().output
+				runtimeClasspath += sourceSets.main.get().output
+			}
+		}
 	}
 }
 
 val testIntegrationImplementation: Configuration by configurations.getting {
+	extendsFrom(configurations.implementation.get())
+}
+
+val testArchitectureImplementation: Configuration by configurations.getting {
+	extendsFrom(configurations.implementation.get())
+}
+
+val testComponentImplementation: Configuration by configurations.getting {
 	extendsFrom(configurations.implementation.get())
 }
 
@@ -67,6 +98,20 @@ dependencies {
 	testIntegrationImplementation("org.testcontainers:jdbc-test:1.12.0")
 	testIntegrationImplementation("org.testcontainers:testcontainers:1.19.1")
 	testIntegrationImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
+
+	testArchitectureImplementation("com.tngtech.archunit:archunit-junit5:1.0.1")
+	testArchitectureImplementation("io.kotest:kotest-assertions-core:5.9.1")
+	testArchitectureImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+
+	testComponentImplementation("io.cucumber:cucumber-java:7.14.0")
+	testComponentImplementation("io.cucumber:cucumber-spring:7.14.0")
+	testComponentImplementation("io.cucumber:cucumber-junit:7.14.0")
+	testComponentImplementation("io.cucumber:cucumber-junit-platform-engine:7.14.0")
+	testComponentImplementation("io.rest-assured:rest-assured:5.3.2")
+	testComponentImplementation("org.junit.platform:junit-platform-suite:1.10.0")
+	testComponentImplementation("org.testcontainers:postgresql:1.19.1")
+	testComponentImplementation("io.kotest:kotest-assertions-core:5.9.1")
+	testComponentImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 kotlin {
