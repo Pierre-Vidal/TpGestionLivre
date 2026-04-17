@@ -44,3 +44,13 @@ exceptions:
     active: false
   TooGenericExceptionThrown:
     active: false
+
+empty-blocks:
+  active: true
+  EmptyFunctionBlock:
+    active: false
+
+performance:
+  active: true
+  SpreadOperator:
+    active: false
