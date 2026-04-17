@@ -5,6 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 	jacoco
 	id("info.solidsoft.pitest") version "1.15.0"
+	id("io.gitlab.arturbosch.detekt") version "1.23.6"
 }
 
 group = "com.example"
@@ -137,6 +138,11 @@ tasks.jacocoTestReport {
 		xml.required = true
 		html.required = true
 	}
+}
+
+detekt {
+	config.setFrom("config/detekt.yml")
+	buildUponDefaultConfig = true
 }
 
 pitest {
