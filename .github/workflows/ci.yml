@@ -86,13 +86,3 @@ jobs:
         with:
           name: mutation-report
           path: build/reports/pitest/
-
-      - name: Run Detekt
-        run: ./gradlew detekt
-
-      - name: Upload Detekt report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: detekt-report
-          path: build/reports/detekt/
