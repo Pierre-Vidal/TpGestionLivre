@@ -12,10 +12,6 @@ style:
   ReturnCount:
     active: true
     max: 2
-  EmptyFunctionBlock:
-    active: false
-  SpreadOperator:
-    active: false
   MaxLineLength:
     active: false
 
