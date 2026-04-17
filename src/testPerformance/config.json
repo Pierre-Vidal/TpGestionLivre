@@ -1,0 +1,32 @@
+{
+  "discardResponseBodies": true,
+  "scenarios": {
+    "creer_livre": {
+      "executor": "constant-arrival-rate",
+      "rate": 50,
+      "duration": "10s",
+      "preAllocatedVUs": 5,
+      "maxVUs": 100,
+      "exec": "creer_livre"
+    },
+    "lister_livres": {
+      "executor": "constant-arrival-rate",
+      "rate": 50,
+      "duration": "10s",
+      "preAllocatedVUs": 5,
+      "maxVUs": 100,
+      "exec": "lister_livres"
+    }
+  },
+  "thresholds": {
+    "failed_requests": [
+      "rate<0.01"
+    ],
+    "http_req_duration{scenario:creer_livre}": [
+      "p(95)<500"
+    ],
+    "http_req_duration{scenario:lister_livres}": [
+      "p(95)<500"
+    ]
+  }
+}
