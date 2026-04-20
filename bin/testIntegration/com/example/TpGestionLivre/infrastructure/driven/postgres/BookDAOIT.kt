@@ -75,5 +75,55 @@ class BookDAOIT : FunSpec() {
             // Assert
             livres shouldBe emptyList()
         }
+
+        // --- Réservation ---
+
+        test("reserver devrait mettre à jour le champ reserve_par dans la base de données") {
+            // Arrange
+            bookDAO.save(Livre(titre = "Harry Potter", auteur = "J.K Rowling"))
+            val id = bookDAO.findAll().first().id!!
+
+            // Act
+            bookDAO.reserver(id, "Hermione Granger")
+
+            // Assert
+            val livre = bookDAO.findById(id)!!
+            livre.reservePar shouldBe "Hermione Granger"
+            livre.estDisponible shouldBe false
+        }
+
+        test("findById devrait retourner le livre correspondant") {
+            // Arrange
+            bookDAO.save(Livre(titre = "Les Misérables", auteur = "Victor Hugo"))
+            val id = bookDAO.findAll().first().id!!
+
+            // Act
+            val livre = bookDAO.findById(id)
+
+            // Assert
+            livre?.titre shouldBe "Les Misérables"
+            livre?.auteur shouldBe "Victor Hugo"
+        }
+
+        test("findById avec un id inexistant devrait retourner null") {
+            // Act
+            val livre = bookDAO.findById(999)
+
+            // Assert
+            livre shouldBe null
+        }
+
+        test("un livre non réservé devrait être disponible") {
+            // Arrange
+            bookDAO.save(Livre(titre = "Le Petit Prince", auteur = "Antoine de Saint-Exupéry"))
+            val id = bookDAO.findAll().first().id!!
+
+            // Act
+            val livre = bookDAO.findById(id)!!
+
+            // Assert
+            livre.estDisponible shouldBe true
+            livre.reservePar shouldBe null
+        }
     }
 }

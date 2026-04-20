@@ -76,4 +76,52 @@ class GestionLivreUseCaseTest : FunSpec({
         livres shouldBe emptyList()
     }
 
+    test("réserver Harry Potter devrait appeler reserver sur le repository") {
+        // Arrange
+        val repository = mockk<LivreRepository>(relaxed = true)
+        val useCase = GestionLivreUseCase(repository)
+        every { repository.findById(1) } returns Livre(id = 1, titre = "Harry Potter", auteur = "J.K Rowling")
+
+        // Act
+        useCase.reserverLivre(1, "Hermione Granger")
+
+        // Assert
+        verify { repository.reserver(1, "Hermione Granger") }
+    }
+
+    test("réserver un livre déjà réservé devrait lancer une IllegalArgumentException") {
+        // Arrange
+        val repository = mockk<LivreRepository>()
+        val useCase = GestionLivreUseCase(repository)
+        every { repository.findById(1) } returns Livre(id = 1, titre = "Harry Potter", auteur = "J.K Rowling", reservePar = "Hermione Granger")
+
+        // Act & Assert
+        shouldThrow<IllegalArgumentException> {
+            useCase.reserverLivre(1, "Ron Weasley")
+        }
+    }
+
+    test("réserver un livre avec un nom vide devrait lancer une IllegalArgumentException") {
+        // Arrange
+        val repository = mockk<LivreRepository>()
+        val useCase = GestionLivreUseCase(repository)
+
+        // Act & Assert
+        shouldThrow<IllegalArgumentException> {
+            useCase.reserverLivre(1, "")
+        }
+    }
+
+    test("réserver un livre introuvable devrait lancer une IllegalStateException") {
+        // Arrange
+        val repository = mockk<LivreRepository>()
+        val useCase = GestionLivreUseCase(repository)
+        every { repository.findById(99) } returns null
+
+        // Act & Assert
+        shouldThrow<IllegalStateException> {
+            useCase.reserverLivre(99, "Hermione Granger")
+        }
+    }
+
 })

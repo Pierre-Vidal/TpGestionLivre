@@ -23,11 +23,11 @@ class BookControllerIT(
     override fun extensions() = listOf(SpringExtension)
 
     init {
-        test("GET /books devrait retourner la liste des livres") {
+        test("GET /books devrait retourner la liste des livres avec leur disponibilité") {
             // Arrange
             every { gestionLivreUseCase.listerLivres() } returns listOf(
-                Livre(titre = "Harry Potter", auteur = "J.K Rowling"),
-                Livre(titre = "Les Misérables", auteur = "Victor Hugo")
+                Livre(id = 1, titre = "Harry Potter", auteur = "J.K Rowling"),
+                Livre(id = 2, titre = "Les Misérables", auteur = "Victor Hugo", reservePar = "Hermione Granger")
             )
 
             // Act & Assert
@@ -36,7 +36,7 @@ class BookControllerIT(
             }.andExpect {
                 status { isOk() }
                 content { contentType(MediaType.APPLICATION_JSON) }
-                content { json("""[{"titre":"Harry Potter","auteur":"J.K Rowling"},{"titre":"Les Misérables","auteur":"Victor Hugo"}]""") }
+                content { json("""[{"id":1,"titre":"Harry Potter","auteur":"J.K Rowling","disponible":true},{"id":2,"titre":"Les Misérables","auteur":"Victor Hugo","disponible":false}]""") }
             }
         }
 
@@ -81,6 +81,52 @@ class BookControllerIT(
                     contentType = MediaType.APPLICATION_JSON
                     content = """{"titre":"Harry Potter","auteur":"J.K Rowling"}"""
                 }
+            }
+        }
+
+        // --- Réservation ---
+
+        test("POST /books/{id}/reserver devrait réserver le livre et retourner 200") {
+            // Arrange
+            every { gestionLivreUseCase.reserverLivre(1, "Hermione Granger") } returns Unit
+
+            // Act & Assert
+            mockMvc.post("/books/1/reserver") {
+                contentType = MediaType.APPLICATION_JSON
+                content = """{"reservePar":"Hermione Granger"}"""
+            }.andExpect {
+                status { isOk() }
+            }
+
+            // Assert
+            verify { gestionLivreUseCase.reserverLivre(1, "Hermione Granger") }
+        }
+
+        test("POST /books/{id}/reserver sur un livre déjà réservé devrait retourner 400") {
+            // Arrange
+            every { gestionLivreUseCase.reserverLivre(1, "Ron Weasley") } throws
+                IllegalArgumentException("Le livre est déjà réservé")
+
+            // Act & Assert
+            mockMvc.post("/books/1/reserver") {
+                contentType = MediaType.APPLICATION_JSON
+                content = """{"reservePar":"Ron Weasley"}"""
+            }.andExpect {
+                status { isBadRequest() }
+            }
+        }
+
+        test("POST /books/{id}/reserver avec un nom vide devrait retourner 400") {
+            // Arrange
+            every { gestionLivreUseCase.reserverLivre(1, "") } throws
+                IllegalArgumentException("Le nom du réservant ne peut pas être vide")
+
+            // Act & Assert
+            mockMvc.post("/books/1/reserver") {
+                contentType = MediaType.APPLICATION_JSON
+                content = """{"reservePar":""}"""
+            }.andExpect {
+                status { isBadRequest() }
             }
         }
     }

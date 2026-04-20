@@ -3,4 +3,5 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <include file="/db/changelogs/create_table_livre.xml"/>
+    <include file="/db/changelogs/alter_table_livre_add_reserve_par.xml"/>
 </databaseChangeLog>

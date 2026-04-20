@@ -25,9 +25,32 @@ class BookDAO(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
             MapSqlParameterSource()
         ) { rs, _ ->
             Livre(
+                id = rs.getInt("id"),
                 titre = rs.getString("titre"),
-                auteur = rs.getString("auteur")
+                auteur = rs.getString("auteur"),
+                reservePar = rs.getString("reserve_par")
             )
         }
+    }
+
+    override fun findById(id: Int): Livre? {
+        return namedParameterJdbcTemplate.query(
+            "SELECT * FROM livre WHERE id = :id",
+            mapOf("id" to id)
+        ) { rs, _ ->
+            Livre(
+                id = rs.getInt("id"),
+                titre = rs.getString("titre"),
+                auteur = rs.getString("auteur"),
+                reservePar = rs.getString("reserve_par")
+            )
+        }.firstOrNull()
+    }
+
+    override fun reserver(id: Int, reservePar: String) {
+        namedParameterJdbcTemplate.update(
+            "UPDATE livre SET reserve_par = :reservePar WHERE id = :id",
+            mapOf("id" to id, "reservePar" to reservePar)
+        )
     }
 }

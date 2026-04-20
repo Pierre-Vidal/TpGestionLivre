@@ -15,4 +15,11 @@ class GestionLivreUseCase(private val repository: LivreRepository) {
         return repository.findAll().sortedBy { it.titre }
     }
 
+    fun reserverLivre(id: Int, reservePar: String) {
+        require(reservePar.isNotBlank()) { "Le nom du réservant ne peut pas être vide" }
+        val livre = repository.findById(id) ?: error("Livre introuvable")
+        require(livre.estDisponible) { "Le livre est déjà réservé" }
+        repository.reserver(id, reservePar)
+    }
+
 }
